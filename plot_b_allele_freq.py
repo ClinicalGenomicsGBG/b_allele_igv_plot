@@ -51,7 +51,7 @@ def prepare_variantdict(variantlist, vcf_header):
         final_variant_dict_list.append(variant_dict)
     return final_variant_dict_list, unique_info_columns
 
-def plot_freq(vcf, output):
+def plot_freq(vcf, output, dbsnp):
     
     # Prepare OutputNames
     vcfname = os.path.basename(vcf)
@@ -65,23 +65,37 @@ def plot_freq(vcf, output):
         igvallelefile.write("#type=GENE_EXPRESSION\n")
         igvallelefile.write(f'#track graphtype=points name="{samplename}" color=0,0,255 altColor=255,0,0 maxHeightPixels=80:80:80 viewLimits=-1:1\n')
         igvallelefile.write("#Chromosome\tStart\tEnd\tFeatures\tvalues\n")
-        for variant in variant_dict_list: 
-            samplecolumn = variant[samplename]
-            allele_count = samplecolumn.split(":")[1].split(",")[1]
-            coverage = samplecolumn.split(":")[2]
+        if dbsnp:
+            for variant in variant_dict_list:
+                if variant["ID"] != ".":
+                    samplecolumn = variant[samplename]
+                    allele_count = samplecolumn.split(":")[1].split(",")[1]
+                    coverage = samplecolumn.split(":")[2]
+
+                    try:
+                        fraction = round(float(allele_count) / float(coverage), 3)
+                        igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                    except:
+                        None
+        else:
+            for variant in variant_dict_list: 
+                samplecolumn = variant[samplename]
+                allele_count = samplecolumn.split(":")[1].split(",")[1]
+                coverage = samplecolumn.split(":")[2]
             
-            try:
-                fraction = round(float(allele_count) / float(coverage), 3)
-                igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
-            except:
-                None
+                try:
+                    fraction = round(float(allele_count) / float(coverage), 3)
+                    igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                except:
+                    None
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--dbsnp', nargs='?', help='Restrict variants to those present in dbSNP (must be annotated with dbsnp)')
     parser.add_argument('-v', '--vcf', nargs='?', help='Input MantaVCF to Annotate', required=True)
     parser.add_argument('-o', '--output', nargs='?', help='location to output results', required=True)
     args = parser.parse_args()
-    plot_freq(args.vcf, args.output)
+    plot_freq(args.vcf, args.output, args.dbsnp)
 
 #type=GENE_EXPRESSION
 #track graphtype=points name="Sample1.igv" color=0,0,255 altColor=255,0,0 maxHeightPixels=80:80:80 viewLimits=-1:1

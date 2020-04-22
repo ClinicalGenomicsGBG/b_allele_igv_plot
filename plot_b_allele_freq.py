@@ -97,7 +97,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dbsnp', nargs='?', help='Restrict variants to those present in dbSNP (must be annotated with dbsnp)')
     parser.add_argument('-v', '--vcf', nargs='?', help='Input MantaVCF to Annotate', required=True)
-    parser.add_argument('-o', '--output', nargs='?', help='location to output results, full path with filename', required=True)
+    parser.add_argument('-o', '--output', nargs='?', help='location to output results (directory)', required=True)
     args = parser.parse_args()
     plot_freq(args.vcf, args.output, args.dbsnp)
 

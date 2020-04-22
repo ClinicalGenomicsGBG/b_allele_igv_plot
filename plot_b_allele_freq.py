@@ -61,7 +61,7 @@ def plot_freq(vcf, output, dbsnp):
     variantlist, vcf_header = extract_variantlist(vcf)
     variant_dict_list, unique_info_columns = prepare_variantdict(variantlist, vcf_header)
     samplename = vcf_header[-1]
-    with open(f"{output}/{os.path.basename(vcf)}.igv", "w") as igvallelefile:
+    with open(f"{output}", "w") as igvallelefile:
         igvallelefile.write("#type=GENE_EXPRESSION\n")
         igvallelefile.write(f'#track graphtype=points name="{samplename}" color=0,0,255 altColor=255,0,0 maxHeightPixels=80:80:80 viewLimits=-1:1\n')
         igvallelefile.write("#Chromosome\tStart\tEnd\tFeatures\tvalues\n")
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dbsnp', nargs='?', help='Restrict variants to those present in dbSNP (must be annotated with dbsnp)')
     parser.add_argument('-v', '--vcf', nargs='?', help='Input MantaVCF to Annotate', required=True)
-    parser.add_argument('-o', '--output', nargs='?', help='location to output results', required=True)
+    parser.add_argument('-o', '--output', nargs='?', help='location to output results, full path with filename', required=True)
     args = parser.parse_args()
     plot_freq(args.vcf, args.output, args.dbsnp)
 

@@ -80,9 +80,13 @@ def plot_freq(vcf, output, dbsnp):
         else:
             for variant in variant_dict_list: 
                 samplecolumn = variant[samplename]
-                allele_count = samplecolumn.split(":")[1].split(",")[1]
-                coverage = samplecolumn.split(":")[2]
-            
+                try:
+                    allele_count = samplecolumn.split(":")[1].split(",")[1]
+                    coverage = samplecolumn.split(":")[2]
+                except Exception as message:
+                    print("Warning: could not calculate frequency for variant:")
+                    print(variant)
+                    print(message)
                 try:
                     fraction = round(float(allele_count) / float(coverage), 3)
                     igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')

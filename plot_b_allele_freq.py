@@ -51,7 +51,7 @@ def prepare_variantdict(variantlist, vcf_header):
         final_variant_dict_list.append(variant_dict)
     return final_variant_dict_list, unique_info_columns
 
-def plot_freq(vcf, output, dbsnp):
+def plot_freq(vcf, output, dbsnp=None):
     
     # Prepare OutputNames
     vcfname = os.path.basename(vcf)

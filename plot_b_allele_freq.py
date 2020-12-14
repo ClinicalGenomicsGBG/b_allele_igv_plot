@@ -51,7 +51,7 @@ def prepare_variantdict(variantlist, vcf_header):
         final_variant_dict_list.append(variant_dict)
     return final_variant_dict_list, unique_info_columns
 
-def plot_freq(vcf, output, dbsnp):
+def plot_freq(vcf, output, dbsnp, hg38ref=False):
     
     # Prepare OutputNames
     vcfname = os.path.basename(vcf)
@@ -74,7 +74,10 @@ def plot_freq(vcf, output, dbsnp):
 
                     try:
                         fraction = round(float(allele_count) / float(coverage), 3)
-                        igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                        if not hg38ref == "yes":
+                            igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                        else:
+                            igvallelefile.write(f'{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
                     except:
                         None
         else:
@@ -89,7 +92,10 @@ def plot_freq(vcf, output, dbsnp):
                     print(message)
                 try:
                     fraction = round(float(allele_count) / float(coverage), 3)
-                    igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                    if not hg38ref == "yes":
+                        igvallelefile.write(f'chr{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
+                    else:
+                        igvallelefile.write(f'{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
                 except:
                     None
 
@@ -98,8 +104,9 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dbsnp', nargs='?', help='Restrict variants to those present in dbSNP (must be annotated with dbsnp)')
     parser.add_argument('-v', '--vcf', nargs='?', help='Input MantaVCF to Annotate', required=True)
     parser.add_argument('-o', '--output', nargs='?', help='location to output results (directory)', required=True)
+    parser.add_argument('-hg38', '--hg38ref', nargs='?', help='not adding extra chr if using hg38 reference', required=False)
     args = parser.parse_args()
-    plot_freq(args.vcf, args.output, args.dbsnp)
+    plot_freq(args.vcf, args.output, args.dbsnp, args.hg38ref)
 
 #type=GENE_EXPRESSION
 #track graphtype=points name="Sample1.igv" color=0,0,255 altColor=255,0,0 maxHeightPixels=80:80:80 viewLimits=-1:1

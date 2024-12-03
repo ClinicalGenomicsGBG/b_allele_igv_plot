@@ -1,7 +1,11 @@
 #!/apps/bio/software/anaconda2/envs/mathias_general/bin/python3.6
 import argparse
 import os
-import re
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def extract_variantlist(vcf):
     with open(vcf, 'r') as vcffile:
@@ -73,7 +77,7 @@ def plot_freq(vcf, output, dbsnp, hg38ref=False):
                         allele_count = samplecolumn.split(":")[1].split(",")[1]
                         coverage = samplecolumn.split(":")[2]
                         if int(coverage) == 0:
-                            print(f"Skipping variant with 0 depth: {samplecolumn}")
+                            logging.info(f"Skipping variant with 0 depth: {samplecolumn}")
                             continue
                         fraction = round(float(allele_count) / float(coverage), 3)
                         if not hg38ref == "yes":
@@ -81,8 +85,8 @@ def plot_freq(vcf, output, dbsnp, hg38ref=False):
                         else:
                             igvallelefile.write(f'{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
                     except Exception as e:
-                        print(f"Error processing line: {samplecolumn}")
-                        print(f"Exception: {e}")
+                        logging.error(f"Error processing line: {samplecolumn}")
+                        logging.error(f"Exception: {e}")
         else:
             for variant in variant_dict_list: 
                 samplecolumn = variant[samplename]
@@ -90,7 +94,7 @@ def plot_freq(vcf, output, dbsnp, hg38ref=False):
                     allele_count = samplecolumn.split(":")[1].split(",")[1]
                     coverage = samplecolumn.split(":")[2]
                     if int(coverage) == 0:
-                        print(f"Skipping variant with 0 depth: {samplecolumn}")
+                        logging.info(f"Skipping variant with 0 depth: {samplecolumn}")
                         continue
                     fraction = round(float(allele_count) / float(coverage), 3)
                     if not hg38ref == "yes":
@@ -98,8 +102,8 @@ def plot_freq(vcf, output, dbsnp, hg38ref=False):
                     else:
                         igvallelefile.write(f'{variant["#CHROM"]}\t{variant["POS"]}\t{variant["POS"]}\t{variant["ALT"]}\t{fraction}\n')
                 except Exception as e:
-                    print(f"Error processing line: {samplecolumn}")
-                    print(f"Exception: {e}")
+                    logging.error(f"Error processing line: {samplecolumn}")
+                    logging.error(f"Exception: {e}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
